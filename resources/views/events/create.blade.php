@@ -28,6 +28,18 @@
             <label>Local:</label>
             <input type="text" name="location" value="{{ old('location') }}">
         </div>
+        <div>
+            <label>Capacidade:</label>
+            <input type="number" name="capacity" value="{{ old('capacity') }}">
+        </div>
+        <div>
+            <label>Preço:</label>
+            <input type="number" step="0.01" name="price" value="{{ old('price', '0.00') }}">
+        </div>
+        <div>
+            <label>Categoria:</label>
+            <input type="text" name="category" value="{{ old('category') }}">
+        </div>
         <button type="submit">Salvar</button>
     </form>
     <a href="{{ route('events.index') }}">Voltar</a>

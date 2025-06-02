@@ -56,6 +56,7 @@
                             @method('DELETE')
                             <button type="submit">Excluir</button>
                         </form>
+                        <a href="{{ route('events.attendees', $event) }}">Gerenciar inscritos</a>
                     @endcan
                 </li>
                 <hr>
@@ -64,5 +65,7 @@
     @endif
 
     <a href="{{ route('events.index') }}">Gerenciar eventos</a>
+    <a href="{{ route('my.registrations') }}">Meus eventos inscritos</a>
+    <a href="{{ route('profile.edit') }}">Editar perfil</a>
 </body>
 </html>

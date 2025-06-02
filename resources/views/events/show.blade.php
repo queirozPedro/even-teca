@@ -12,7 +12,9 @@
         <p>Fim: {{ $event->end_time->format('d/m/Y H:i') }}</p>
     @endif
     <p>Local: {{ $event->location }}</p>
-    <a href="{{ route('events.edit', $event) }}">Editar</a> |
+    @can('manage-events')
+        <a href="{{ route('events.edit', $event) }}">Editar</a> |
+    @endcan
     <a href="{{ route('events.index') }}">Voltar</a>
 </body>
 </html>

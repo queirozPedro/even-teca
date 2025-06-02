@@ -24,12 +24,14 @@
                     @endif
                     Local: {{ $event->location }}<br>
                     <a href="{{ route('events.show', $event) }}">Ver</a> |
-                    <a href="{{ route('events.edit', $event) }}">Editar</a> |
-                    <form action="{{ route('events.destroy', $event) }}" method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" onclick="return confirm('Tem certeza?')">Excluir</button>
-                    </form>
+                    @can('manage-events')
+                        <a href="{{ route('events.edit', $event) }}">Editar</a> |
+                        <form action="{{ route('events.destroy', $event) }}" method="POST" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" onclick="return confirm('Tem certeza?')">Excluir</button>
+                        </form>
+                    @endcan
                 </li>
                 <hr>
             @endforeach

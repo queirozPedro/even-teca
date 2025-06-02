@@ -4,15 +4,29 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Event;
+use App\Notifications\RegistrationConfirmed;
+use App\Notifications\RegistrationApproved;
+use App\Notifications\RegistrationRejected;
+use App\Notifications\EventReminder;
 
 class EventController extends Controller
 {
     /**
      * Exibe a lista de eventos.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $events = Event::all();
+        $query = Event::query();
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+        if ($request->filled('location')) {
+            $query->where('location', 'like', '%'.$request->location.'%');
+        }
+        if ($request->filled('start_time')) {
+            $query->whereDate('start_time', '>=', $request->start_time);
+        }
+        $events = $query->get();
         return view('events.index', compact('events'));
     }
 
@@ -35,7 +49,12 @@ class EventController extends Controller
             'start_time' => 'required|date',
             'end_time' => 'nullable|date|after_or_equal:start_time',
             'location' => 'nullable|string|max:255',
+            'capacity' => 'nullable|integer',
+            'price' => 'nullable|numeric',
+            'category' => 'nullable|string|max:255',
         ]);
+
+        $validated['organizer_id'] = auth()->id();
 
         Event::create($validated);
 
@@ -71,6 +90,9 @@ class EventController extends Controller
             'start_time' => 'required|date',
             'end_time' => 'nullable|date|after_or_equal:start_time',
             'location' => 'nullable|string|max:255',
+            'capacity' => 'nullable|integer',
+            'price' => 'nullable|numeric',
+            'category' => 'nullable|string|max:255',
         ]);
 
         $event = Event::findOrFail($id);
@@ -95,9 +117,15 @@ class EventController extends Controller
      */
     public function subscribe(Event $event)
     {
+        if ($event->capacity !== null && $event->users()->count() >= $event->capacity) {
+            return back()->with('error', 'Event is full!');
+        }
         $user = auth()->user();
-        $event->users()->syncWithoutDetaching($user->id);
-        return back()->with('success', 'Inscrição realizada com sucesso!');
+        $event->users()->syncWithoutDetaching([
+            $user->id => ['status' => 'pending']
+        ]);
+        $user->notify(new RegistrationConfirmed($event));
+        return back()->with('success', 'Inscrição realizada! Aguarde aprovação do organizador.');
     }
 
     /**
@@ -108,5 +136,51 @@ class EventController extends Controller
         $user = auth()->user();
         $event->users()->detach($user->id);
         return back()->with('success', 'Inscrição cancelada com sucesso!');
+    }
+
+    /**
+     * Exibe os participantes de um evento.
+     */
+    public function attendees(Event $event)
+    {
+        $this->authorize('manage-events');
+        $attendees = $event->users()->withPivot('status')->get();
+        return view('events.attendees', compact('event', 'attendees'));
+    }
+
+    /**
+     * Aprova a inscrição de um usuário em um evento.
+     */
+    public function approveRegistration(Event $event, $userId)
+    {
+        $this->authorize('manage-events');
+        $event->users()->updateExistingPivot($userId, ['status' => 'confirmed']);
+        $user = \App\Models\User::find($userId);
+        $user->notify(new RegistrationApproved($event));
+        return back()->with('success', 'Inscrição aprovada!');
+    }
+
+    /**
+     * Rejeita a inscrição de um usuário em um evento.
+     */
+    public function rejectRegistration(Event $event, $userId)
+    {
+        $this->authorize('manage-events');
+        $event->users()->updateExistingPivot($userId, ['status' => 'rejected']);
+        $user = \App\Models\User::find($userId);
+        $user->notify(new RegistrationRejected($event));
+        return back()->with('success', 'Inscrição rejeitada!');
+    }
+
+    /**
+     * Envia lembretes para os participantes de eventos que começam no dia seguinte.
+     */
+    public function sendReminders()
+    {
+        foreach (Event::whereDate('start_time', now()->addDay())->get() as $event) {
+            foreach ($event->users as $user) {
+                $user->notify(new EventReminder($event));
+            }
+        }
     }
 }

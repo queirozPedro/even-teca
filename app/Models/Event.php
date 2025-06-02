@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class Event extends Model
 {
@@ -12,6 +14,10 @@ class Event extends Model
         'start_time',
         'end_time',
         'location',
+        'organizer_id',
+        'capacity',
+        'price',
+        'category',
     ];
     protected $casts = [
         'start_time' => 'datetime',
@@ -20,6 +26,13 @@ class Event extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'event_user');
+        return $this->belongsToMany(\App\Models\User::class, 'event_user')->withPivot('status');
+    }
+
+    public function up()
+    {
+        Schema::table('event_user', function (Blueprint $table) {
+            $table->string('status')->default('confirmed');
+        });
     }
 }

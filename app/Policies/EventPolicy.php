@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 
 class EventPolicy
 {
@@ -19,3 +20,5 @@ class EventPolicy
         return $user->isAdmin() || $user->isOrganizer();
     }
 }
+
+Gate::define('manage-events', [\App\Policies\EventPolicy::class, 'manageEvents']);

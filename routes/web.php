@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\AdminController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -19,6 +20,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
     Route::post('/events/{event}/subscribe', [EventController::class, 'subscribe'])->name('events.subscribe');
     Route::delete('/events/{event}/unsubscribe', [EventController::class, 'unsubscribe'])->name('events.unsubscribe');
+    Route::get('/my-registrations', [HomeController::class, 'myRegistrations'])->name('my.registrations');
+    Route::get('/profile/edit', [HomeController::class, 'editProfile'])->name('profile.edit');
+    Route::post('/profile/update', [HomeController::class, 'updateProfile'])->name('profile.update');
 });
 
 Route::middleware(['auth', 'can:manage-events'])->group(function () {
@@ -27,7 +31,24 @@ Route::middleware(['auth', 'can:manage-events'])->group(function () {
     Route::get('/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
     Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
     Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
+    Route::get('/events/{event}/attendees', [EventController::class, 'attendees'])->name('events.attendees');
+    Route::post('/events/{event}/approve/{user}', [EventController::class, 'approveRegistration'])->name('events.approve');
+    Route::post('/events/{event}/reject/{user}', [EventController::class, 'rejectRegistration'])->name('events.reject');
 });
 
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
+
+Route::middleware(['auth'])->group(function () {
+    Route::middleware('can:is-admin')->group(function () {
+        Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
+        Route::get('/admin/users/{id}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
+        Route::put('/admin/users/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
+        Route::delete('/admin/users/{id}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
+        Route::get('/admin/events', [AdminController::class, 'events'])->name('admin.events');
+        Route::get('/admin/reports', [AdminController::class, 'reports'])->name('admin.reports');
+    });
+    Route::middleware('can:manage-events')->group(function () {
+        Route::get('/organizer/reports', [AdminController::class, 'reports'])->name('organizer.reports');
+    });
+});
