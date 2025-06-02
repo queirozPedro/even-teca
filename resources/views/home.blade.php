@@ -32,11 +32,37 @@
                     @if($event->end_time)
                         Fim: {{ $event->end_time->format('d/m/Y H:i') }}<br>
                     @endif
-                    Local: {{ $event->location }}
+                    Local: {{ $event->location }}<br>
+
+                    @if(Auth::user()->isUser())
+                        @if(!Auth::user()->events->contains($event->id))
+                            <form method="POST" action="{{ route('events.subscribe', $event) }}">
+                                @csrf
+                                <button type="submit">Inscrever-se</button>
+                            </form>
+                        @else
+                            <form method="POST" action="{{ route('events.unsubscribe', $event) }}">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit">Cancelar inscrição</button>
+                            </form>
+                        @endif
+                    @endif
+
+                    @can('manage-events')
+                        <a href="{{ route('events.edit', $event) }}">Editar</a>
+                        <form action="{{ route('events.destroy', $event) }}" method="POST" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit">Excluir</button>
+                        </form>
+                    @endcan
                 </li>
                 <hr>
             @endforeach
         </ul>
     @endif
+
+    <a href="{{ route('events.index') }}">Gerenciar eventos</a>
 </body>
 </html>

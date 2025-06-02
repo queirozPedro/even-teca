@@ -17,4 +17,9 @@ class Event extends Model
         'start_time' => 'datetime',
         'end_time' => 'datetime',
     ];
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'event_user');
+    }
 }

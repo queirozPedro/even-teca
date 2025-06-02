@@ -89,4 +89,24 @@ class EventController extends Controller
 
         return redirect()->route('events.index')->with('success', 'Evento excluído com sucesso!');
     }
+
+    /**
+     * Inscreve o usuário em um evento.
+     */
+    public function subscribe(Event $event)
+    {
+        $user = auth()->user();
+        $event->users()->syncWithoutDetaching($user->id);
+        return back()->with('success', 'Inscrição realizada com sucesso!');
+    }
+
+    /**
+     * Cancela a inscrição do usuário em um evento.
+     */
+    public function unsubscribe(Event $event)
+    {
+        $user = auth()->user();
+        $event->users()->detach($user->id);
+        return back()->with('success', 'Inscrição cancelada com sucesso!');
+    }
 }

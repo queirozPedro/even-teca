@@ -34,5 +34,10 @@
         </div>
         <button type="submit">Entrar</button>
     </form>
+
+    <p>
+        Ainda não tem conta?
+        <a href="{{ route('register') }}">Cadastre-se</a>
+    </p>
 </body>
 </html>

@@ -47,4 +47,36 @@ class AuthController extends Controller
 
         return redirect('/login');
     }
+
+    /**
+     * Exibe o formulário de registro.
+     */
+    public function showRegisterForm()
+    {
+        return view('register');
+    }
+
+    /**
+     * Realiza o registro do usuário.
+     */
+    public function register(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6|confirmed',
+            'role' => 'required|in:user,organizer',
+        ]);
+
+        $user = \App\Models\User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => bcrypt($validated['password']),
+            'role' => $validated['role'],
+        ]);
+
+        Auth::login($user);
+
+        return redirect('/home');
+    }
 }
