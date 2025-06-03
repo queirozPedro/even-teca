@@ -27,7 +27,7 @@ class EventController extends Controller
             $query->whereDate('start_time', '>=', $request->start_time);
         }
         $events = $query->get();
-        return view('events.index', compact('events'));
+        return view('eventos', compact('events'));
     }
 
     /**
@@ -35,7 +35,9 @@ class EventController extends Controller
      */
     public function create()
     {
-        return view('events.create');
+        $events = Event::all();
+        $createEvent = true;
+        return view('eventos', compact('events', 'createEvent'));
     }
 
     /**
@@ -62,21 +64,13 @@ class EventController extends Controller
     }
 
     /**
-     * Exibe um evento específico.
-     */
-    public function show(string $id)
-    {
-        $event = Event::findOrFail($id);
-        return view('events.show', compact('event'));
-    }
-
-    /**
      * Mostra o formulário para editar um evento.
      */
     public function edit(string $id)
     {
-        $event = Event::findOrFail($id);
-        return view('events.edit', compact('event'));
+        $editEvent = Event::findOrFail($id);
+        $events = Event::all();
+        return view('eventos', compact('events', 'editEvent'));
     }
 
     /**
@@ -145,7 +139,9 @@ class EventController extends Controller
     {
         $this->authorize('manage-events');
         $attendees = $event->users()->withPivot('status')->get();
-        return view('events.attendees', compact('event', 'attendees'));
+        $attendeesEvent = $event;
+        $events = Event::all();
+        return view('eventos', compact('events', 'attendees', 'attendeesEvent'));
     }
 
     /**
@@ -182,5 +178,15 @@ class EventController extends Controller
                 $user->notify(new EventReminder($event));
             }
         }
+    }
+
+    /**
+     * Exibe os detalhes de um evento específico.
+     */
+    public function show(string $id)
+    {
+        $showEvent = \App\Models\Event::findOrFail($id);
+        $events = \App\Models\Event::all();
+        return view('eventos', compact('events', 'showEvent'));
     }
 }

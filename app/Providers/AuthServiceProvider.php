@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use App\Policies\EventPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -20,7 +21,6 @@ class AuthServiceProvider extends ServiceProvider
             return $user->role === 'admin';
         });
 
-        // Gate para gerenciar eventos (já usada nas rotas)
-        Gate::define('manage-events', [\App\Policies\EventPolicy::class, 'manageEvents']);
+        Gate::define('manage-events', [EventPolicy::class, 'manageEvents']);
     }
 }

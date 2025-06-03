@@ -15,10 +15,8 @@ class EventPolicy
         //
     }
 
-    public function manageEvents(User $user)
+    public function manageEvents(User $user, $event = null)
     {
         return $user->isAdmin() || $user->isOrganizer();
     }
 }
-
-Gate::define('manage-events', [\App\Policies\EventPolicy::class, 'manageEvents']);

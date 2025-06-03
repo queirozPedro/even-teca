@@ -17,9 +17,6 @@ Route::get('/home', [HomeController::class, 'index'])->middleware('auth');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/events', [EventController::class, 'index'])->name('events.index');
-    Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
-    Route::post('/events/{event}/subscribe', [EventController::class, 'subscribe'])->name('events.subscribe');
-    Route::delete('/events/{event}/unsubscribe', [EventController::class, 'unsubscribe'])->name('events.unsubscribe');
     Route::get('/my-registrations', [HomeController::class, 'myRegistrations'])->name('my.registrations');
     Route::get('/profile/edit', [HomeController::class, 'editProfile'])->name('profile.edit');
     Route::post('/profile/update', [HomeController::class, 'updateProfile'])->name('profile.update');
@@ -34,6 +31,10 @@ Route::middleware(['auth', 'can:manage-events'])->group(function () {
     Route::get('/events/{event}/attendees', [EventController::class, 'attendees'])->name('events.attendees');
     Route::post('/events/{event}/approve/{user}', [EventController::class, 'approveRegistration'])->name('events.approve');
     Route::post('/events/{event}/reject/{user}', [EventController::class, 'rejectRegistration'])->name('events.reject');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 });
 
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');

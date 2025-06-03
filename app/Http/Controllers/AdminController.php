@@ -11,13 +11,16 @@ class AdminController extends Controller
     public function users()
     {
         $users = User::all();
-        return view('admin.users', compact('users'));
+        $events = Event::with('users')->get();
+        return view('admin', compact('users', 'events'));
     }
 
     public function editUser($id)
     {
-        $user = User::findOrFail($id);
-        return view('admin.edit_user', compact('user'));
+        $users = User::all();
+        $editUser = User::findOrFail($id);
+        $events = Event::with('users')->get();
+        return view('admin', compact('users', 'editUser', 'events'));
     }
 
     public function updateUser(Request $request, $id)
@@ -41,22 +44,22 @@ class AdminController extends Controller
 
     public function events()
     {
+        $users = User::all();
         $events = Event::with('users')->get();
-        return view('admin.events', compact('events'));
+        return view('admin', compact('users', 'events'));
     }
     public function reports()
     {
-        // Para admin: todos os eventos; para organizer: só os dele
         $user = auth()->user();
         if ($user->role === 'admin') {
-            $events = \App\Models\Event::withCount('users')->orderByDesc('users_count')->get();
+            $events = Event::withCount('users')->orderByDesc('users_count')->get();
         } else {
-            $events = \App\Models\Event::where('organizer_id', $user->id)
+            $events = Event::where('organizer_id', $user->id)
                 ->withCount('users')
                 ->orderByDesc('users_count')
                 ->get();
         }
-
-        return view('admin.reports', compact('events'));
+        $users = User::all();
+        return view('admin', compact('users', 'events'));
     }
 }
