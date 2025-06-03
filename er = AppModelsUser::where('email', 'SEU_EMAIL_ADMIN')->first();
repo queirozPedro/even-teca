@@ -1,0 +1,38 @@
+[90m= [39m[34;4mIlluminate\Database\Eloquent\Collection[39;24m {#2221
+    [34mall[39m: [
+      [34;4mApp\Models\User[39;24m {#7099
+        [34mid[39m: [35m1[39m,
+        [34mname[39m: "[32mJaqueline Ferreira[39m",
+        [34memail[39m: "[32mJaque@lina.com[39m",
+        [34memail_verified_at[39m: [36mnull[39m,
+        #[33mpassword[39m: "[32m$2y$12$OwLbcqMZrwexijcQ4g4oE.6PF/8EM5MNe51pXBKOGYnV8ka7oIeAm[39m",
+        [34mrole[39m: "[32morganizer[39m",
+        #[33mremember_token[39m: [36mnull[39m,
+        [34mcreated_at[39m: "[32m2025-06-03 01:46:39[39m",
+        [34mupdated_at[39m: "[32m2025-06-03 01:46:39[39m",
+      },
+      [34;4mApp\Models\User[39;24m {#7100
+        [34mid[39m: [35m2[39m,
+        [34mname[39m: "[32mPedro Queiroz[39m",
+        [34memail[39m: "[32mpedro@queiroz.com[39m",
+        [34memail_verified_at[39m: [36mnull[39m,
+        #[33mpassword[39m: "[32m$2y$12$RgTbRP/P8r1BAlhVpxGZF.k.qF3s1qMHNJxtaEtum0hKrZRx2eg.G[39m",
+        [34mrole[39m: "[32muser[39m",
+        #[33mremember_token[39m: [36mnull[39m,
+        [34mcreated_at[39m: "[32m2025-06-03 01:54:14[39m",
+        [34mupdated_at[39m: "[32m2025-06-03 01:54:14[39m",
+      },
+      [34;4mApp\Models\User[39;24m {#7101
+        [34mid[39m: [35m3[39m,
+        [34mname[39m: "[32mAdmin[39m",
+        [34memail[39m: "[32madmin@admin.com[39m",
+        [34memail_verified_at[39m: [36mnull[39m,
+        #[33mpassword[39m: "[32m$2y$12$Lkn9bwBGVmt4DcIhuKxfPOXE5l5oxKqthiFXb1WlWKbPr049OCCXy[39m",
+        [34mrole[39m: "[32madmin[39m",
+        #[33mremember_token[39m: [36mnull[39m,
+        [34mcreated_at[39m: "[32m2025-06-03 02:02:05[39m",
+        [34mupdated_at[39m: "[32m2025-06-03 02:02:05[39m",
+      },
+    ],
+  }
+

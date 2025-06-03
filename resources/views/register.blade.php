@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Cadastro</title>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 <body>
     <h1>Cadastro</h1>
     @if ($errors->any())
-        <div style="color: red;">
+        <div class="error">
             <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -42,6 +43,8 @@
         </div>
         <button type="submit">Cadastrar</button>
     </form>
-    <a href="{{ route('login') }}">Voltar para login</a>
+    <div style="text-align:center; margin-top:1rem;">
+        <a href="{{ route('login') }}">Voltar para login</a>
+    </div>
 </body>
 </html>
