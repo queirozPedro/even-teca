@@ -9,7 +9,7 @@ use App\Policies\EventPolicy;
 class AuthServiceProvider extends ServiceProvider
 {
     protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        \App\Models\Event::class => \App\Policies\EventPolicy::class,
     ];
 
     public function boot()

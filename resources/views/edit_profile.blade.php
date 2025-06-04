@@ -20,7 +20,7 @@
             </ul>
         </div>
     @endif
-    <form method="POST" action="{{ route('profile.update') }}">
+    <form method="POST" action="{{ route('profile.update') }}" class="profile-form">
         @csrf
         <div>
             <label>Nome:</label>

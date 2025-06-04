@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>EvenTeca</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <!-- Use .my-registrations-header, .my-registrations-list, etc -->
 </head>
 <body>
     <div style="width:100%; padding: 1.5rem 2rem 0 2rem;">

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Eventos</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/eventos.css') }}">
 </head>
 <body>
     <h1 class="titulo-principal">

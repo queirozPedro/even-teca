@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <title>EvenTeca</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 </head>
 <body>
-    <div style="width:100%; padding: 1.5rem 2rem 0 2rem;">
-        <h1 style="margin: 0; text-align: left;">
+    <div class="admin-header">
+        <h1 class="admin-title">
             <a href="{{ url('/home') }}" style="text-decoration:none; color:inherit;">EvenTeca</a>
         </h1>
     </div>
@@ -15,9 +16,9 @@
     <h1>Painel Administrativo</h1>
 
     {{-- Usuários --}}
-    <h2>Usuários</h2>
+    <h2 class="admin-section-title">Usuários</h2>
     @if(session('success')) <div style="color:green">{{ session('success') }}</div> @endif
-    <table border="1">
+    <table class="admin-table" border="1">
         <tr>
             <th>ID</th><th>Nome</th><th>Email</th><th>Tipo</th><th>Ações</th>
         </tr>
@@ -28,10 +29,10 @@
             <td>{{ $user->email }}</td>
             <td>{{ $user->role }}</td>
             <td>
-                <a href="{{ route('admin.users.edit', $user) }}">Editar</a>
+                <a class="admin-btn" href="{{ route('admin.users.edit', $user) }}">Editar</a>
                 <form method="POST" action="{{ route('admin.users.delete', $user) }}" style="display:inline;">
                     @csrf @method('DELETE')
-                    <button type="submit" onclick="return confirm('Excluir?')">Excluir</button>
+                    <button class="admin-btn" type="submit" onclick="return confirm('Excluir?')">Excluir</button>
                 </form>
             </td>
         </tr>
@@ -64,8 +65,8 @@
     @endisset
 
     {{-- Eventos --}}
-    <h2>Eventos</h2>
-    <table border="1">
+    <h2 class="admin-section-title">Eventos</h2>
+    <table class="admin-table" border="1">
         <tr>
             <th>ID</th><th>Título</th><th>Organizador</th><th>Inscritos</th>
         </tr>
@@ -86,8 +87,8 @@
     </table>
 
     {{-- Relatórios --}}
-    <h2>Relatórios</h2>
-    <table border="1">
+    <h2 class="admin-section-title">Relatórios</h2>
+    <table class="admin-table" border="1">
         <tr>
             <th>ID</th>
             <th>Título</th>

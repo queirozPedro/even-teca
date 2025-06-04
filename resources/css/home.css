@@ -1,0 +1,85 @@
+.home-header {
+    width: 100%;
+    padding: 1.5rem 2rem 0 2rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between; /* Alinha título à esquerda e usuário à direita */
+}
+
+.home-title-area {
+    display: flex;
+    align-items: center;
+}
+
+.home-title-link {
+    font-size: 2rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: #2563eb;
+}
+
+.home-user-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    min-width: 120px;
+}
+
+.home-user {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 0.2rem;
+}
+
+.home-btn-logout {
+    background: #FF6B6B;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 7px 18px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.home-btn-logout:hover {
+    background: #e53935;
+}
+
+.event-list {
+    list-style: none;
+    padding: 0;
+}
+
+.event-list li {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.event-list hr {
+    margin: 1.5rem 0;
+}
+
+.home-event-title {
+    text-align: left; /* Garante alinhamento à esquerda */
+    margin: 2rem 0 1.5rem 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2563eb;
+}
+
+.user-corner {
+    position: absolute;
+    top: 16px;
+    right: 24px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    z-index: 100;
+}
+
+.user-right {
+    position: absolute;
+    top: 24px;
+    right: 40px;
+}

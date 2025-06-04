@@ -48,6 +48,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/admin/users/{id}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
         Route::get('/admin/events', [AdminController::class, 'events'])->name('admin.events');
         Route::get('/admin/reports', [AdminController::class, 'reports'])->name('admin.reports');
+        Route::get('/admin/events/{event}/edit', [AdminController::class, 'editEvent'])->name('admin.events.edit');
+        Route::put('/admin/events/{event}', [AdminController::class, 'updateEvent'])->name('admin.events.update');
+        Route::delete('/admin/events/{event}', [AdminController::class, 'deleteEvent'])->name('admin.events.delete');
     });
     Route::middleware('can:manage-events')->group(function () {
         Route::get('/organizer/reports', [AdminController::class, 'reports'])->name('organizer.reports');

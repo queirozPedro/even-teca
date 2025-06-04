@@ -68,8 +68,9 @@ class EventController extends Controller
      */
     public function edit(string $id)
     {
-        $editEvent = Event::findOrFail($id);
-        $events = Event::all();
+        $editEvent = \App\Models\Event::findOrFail($id);
+        $this->authorize('update', $editEvent); // Adicione esta linha
+        $events = \App\Models\Event::all();
         return view('eventos', compact('events', 'editEvent'));
     }
 
@@ -78,6 +79,9 @@ class EventController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $event = \App\Models\Event::findOrFail($id);
+        $this->authorize('update', $event); // Adicione esta linha
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -90,7 +94,6 @@ class EventController extends Controller
 
         $validated['price'] = $validated['price'] ?? 0;
 
-        $event = \App\Models\Event::findOrFail($id);
         $event->update($validated);
 
         return redirect()->route('events.index')->with('success', 'Evento atualizado com sucesso!');

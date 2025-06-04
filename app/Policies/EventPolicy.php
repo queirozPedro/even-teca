@@ -19,4 +19,10 @@ class EventPolicy
     {
         return $user->isAdmin() || $user->isOrganizer();
     }
+    
+    public function update(\App\Models\User $user, \App\Models\Event $event)
+    {
+        // Só o organizer que criou pode editar
+        return $user->role === 'organizer' && $event->organizer_id === $user->id;
+    }
 }

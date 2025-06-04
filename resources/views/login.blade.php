@@ -6,8 +6,8 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 <body>
-    <h1 style="text-align:center; margin: 2rem 0 1.5rem 0;">
-        <a href="{{ url('/login') }}" style="text-decoration:none; color:inherit;">EvenTeca</a>
+    <h1 class="login-title">
+        <a href="{{ url('/login') }}" class="login-title-link">EvenTeca</a>
     </h1>
     <div class="w-full max-w-md bg-white/90 rounded-3xl shadow-2xl p-10 border border-blue-200 animate-fade-in flex flex-col items-center justify-center">
         @if ($errors->any())
@@ -37,7 +37,7 @@
             </div>
             {{-- Mensagem de erro personalizada para credenciais --}}
             @if ($errors->has('email'))
-                <div class="w-full text-red-600 text-sm text-center mt-2 mb-2" style="color: red;">
+                <div class="w-full text-red-600 text-sm text-center mt-2 mb-2 login-error">
                     {{ $errors->first('email') }}
                     As credenciais informadas não conferem.
                 </div>
@@ -59,14 +59,5 @@
             </p>
         </form>
     </div>
-    <style>
-        .animate-fade-in {
-            animation: fadeIn 1s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px);}
-            to { opacity: 1; transform: translateY(0);}
-        }
-    </style>
 </body>
 </html>
