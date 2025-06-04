@@ -51,14 +51,14 @@ class EventController extends Controller
             'start_time' => 'required|date',
             'end_time' => 'nullable|date|after_or_equal:start_time',
             'location' => 'nullable|string|max:255',
-            'capacity' => 'nullable|integer',
-            'price' => 'nullable|numeric',
-            'category' => 'nullable|string|max:255',
+            'capacity' => 'nullable|integer|min:1',
+            'price' => 'nullable|numeric|min:0',
         ]);
 
         $validated['organizer_id'] = auth()->id();
+        $validated['price'] = $validated['price'] ?? 0;
 
-        Event::create($validated);
+        \App\Models\Event::create($validated);
 
         return redirect()->route('events.index')->with('success', 'Evento criado com sucesso!');
     }
@@ -84,12 +84,13 @@ class EventController extends Controller
             'start_time' => 'required|date',
             'end_time' => 'nullable|date|after_or_equal:start_time',
             'location' => 'nullable|string|max:255',
-            'capacity' => 'nullable|integer',
-            'price' => 'nullable|numeric',
-            'category' => 'nullable|string|max:255',
+            'capacity' => 'nullable|integer|min:1',
+            'price' => 'nullable|numeric|min:0',
         ]);
 
-        $event = Event::findOrFail($id);
+        $validated['price'] = $validated['price'] ?? 0;
+
+        $event = \App\Models\Event::findOrFail($id);
         $event->update($validated);
 
         return redirect()->route('events.index')->with('success', 'Evento atualizado com sucesso!');
@@ -137,7 +138,6 @@ class EventController extends Controller
      */
     public function attendees(Event $event)
     {
-        $this->authorize('manage-events');
         $attendees = $event->users()->withPivot('status')->get();
         $attendeesEvent = $event;
         $events = Event::all();
@@ -149,7 +149,7 @@ class EventController extends Controller
      */
     public function approveRegistration(Event $event, $userId)
     {
-        $this->authorize('manage-events');
+        // $this->authorize('manage-events');
         $event->users()->updateExistingPivot($userId, ['status' => 'confirmed']);
         $user = \App\Models\User::find($userId);
         $user->notify(new RegistrationApproved($event));
@@ -161,7 +161,7 @@ class EventController extends Controller
      */
     public function rejectRegistration(Event $event, $userId)
     {
-        $this->authorize('manage-events');
+        // $this->authorize('manage-events');
         $event->users()->updateExistingPivot($userId, ['status' => 'rejected']);
         $user = \App\Models\User::find($userId);
         $user->notify(new RegistrationRejected($event));
@@ -188,5 +188,15 @@ class EventController extends Controller
         $showEvent = \App\Models\Event::findOrFail($id);
         $events = \App\Models\Event::all();
         return view('eventos', compact('events', 'showEvent'));
+    }
+
+    /**
+     * Exibe o formulário para exclusão de um evento.
+     */
+    public function delete($id)
+    {
+        $eventToDelete = \App\Models\Event::findOrFail($id);
+        $events = \App\Models\Event::all();
+        return view('eventos', compact('events', 'eventToDelete'));
     }
 }

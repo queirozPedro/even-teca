@@ -2,16 +2,34 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Home - Eventos</title>
+    <title>EvenTeca</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 <body>
-    <h1>Bem-vindo, {{ Auth::user()->name }}!</h1>
-    <p style="text-align:center;">Tipo de usuário: <strong>{{ ucfirst(Auth::user()->role) }}</strong></p>
-    <form method="POST" action="{{ route('logout') }}" style="text-align:center; margin-bottom:2rem;">
-        @csrf
-        <button type="submit">Sair</button>
-    </form>
+    <div style="width:100%; padding: 1.5rem 2rem 0 2rem; display: flex; justify-content: space-between; align-items: center;">
+        <h1 style="margin: 0; text-align: left;">
+            <a href="{{ url('/home') }}" style="text-decoration:none; color:inherit;">EvenTeca</a>
+        </h1>
+        <div style="display: flex; align-items: center; gap: 0.5rem; min-width: 0;">
+            @php
+                $role = Auth::user()->role;
+                $color = match($role) {
+                    'admin' => '#FF9800',      // laranja
+                    'organizer' => '#2563eb',  // azul
+                    default => '#222',         // preto para user
+                };
+            @endphp
+            <span style="font-weight: bold; color: {{ $color }};">
+                {{ Auth::user()->name }}
+            </span>
+            <form method="POST" action="{{ route('logout') }}" style="display:inline; background:none; box-shadow:none; padding:0; border:none;">
+                @csrf
+                <button type="submit" style="background:#FF6B6B; color:#fff; border:none; border-radius:8px; padding:7px 18px; font-weight:bold; font-size:1rem; cursor:pointer;">
+                    Sair
+                </button>
+            </form>
+        </div>
+    </div>
 
     <h2>Lista de Eventos</h2>
 

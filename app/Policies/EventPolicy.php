@@ -15,7 +15,7 @@ class EventPolicy
         //
     }
 
-    public function manageEvents(User $user, $event = null)
+    public function manageEvents(\App\Models\User $user, $event = null)
     {
         return $user->isAdmin() || $user->isOrganizer();
     }

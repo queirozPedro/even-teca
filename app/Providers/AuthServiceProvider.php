@@ -16,11 +16,6 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        // Gate para admin
-        Gate::define('is-admin', function ($user) {
-            return $user->role === 'admin';
-        });
-
-        Gate::define('manage-events', [EventPolicy::class, 'manageEvents']);
+        \Illuminate\Support\Facades\Gate::define('manage-events', [\App\Policies\EventPolicy::class, 'manageEvents']);
     }
 }

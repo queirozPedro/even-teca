@@ -18,13 +18,11 @@ return new class extends Migration
             $table->timestamp('start_time');
             $table->timestamp('end_time')->nullable();
             $table->string('location')->nullable();
-            $table->unsignedBigInteger('organizer_id')->nullable(); // Adicionado
-            $table->integer('capacity')->nullable(); // Adicionado
-            $table->decimal('price', 8, 2)->default(0); // Adicionado
-            $table->string('category')->nullable(); // Adicionado
+            $table->unsignedBigInteger('organizer_id')->nullable(); 
+            $table->integer('capacity')->nullable(); 
+            $table->decimal('price', 8, 2)->default(0); 
             $table->timestamps();
-
-            $table->foreign('organizer_id')->references('id')->on('users')->onDelete('set null'); // Adicionado
+            $table->foreign('organizer_id')->references('id')->on('users')->onDelete('set null'); 
         });
     }
 

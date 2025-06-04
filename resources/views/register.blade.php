@@ -2,11 +2,13 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Cadastro</title>
+    <title>EvenTeca</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 <body>
-    <h1>Cadastro</h1>
+    <h1 style="text-align:center; margin: 2rem 0 1.5rem 0;">
+        <a href="{{ url('/login') }}" style="text-decoration:none; color:inherit;">EvenTeca</a>
+    </h1>
     @if ($errors->any())
         <div class="error">
             <ul>
@@ -43,8 +45,5 @@
         </div>
         <button type="submit">Cadastrar</button>
     </form>
-    <div style="text-align:center; margin-top:1rem;">
-        <a href="{{ route('login') }}">Voltar para login</a>
-    </div>
 </body>
 </html>

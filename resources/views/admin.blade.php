@@ -1,7 +1,17 @@
 <!DOCTYPE html>
 <html>
-<head><title>Administração</title></head>
+<head>
+    <meta charset="UTF-8">
+    <title>EvenTeca</title>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+</head>
 <body>
+    <div style="width:100%; padding: 1.5rem 2rem 0 2rem;">
+        <h1 style="margin: 0; text-align: left;">
+            <a href="{{ url('/home') }}" style="text-decoration:none; color:inherit;">EvenTeca</a>
+        </h1>
+    </div>
+
     <h1>Painel Administrativo</h1>
 
     {{-- Usuários --}}

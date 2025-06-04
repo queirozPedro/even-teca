@@ -10,6 +10,11 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('event_id')->constrained()->onDelete('cascade');
+            $table->float('amount', 8, 2)->nullable(false);
+            $table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
+            $table->enum('payment_method', ['credit_card', 'paypal', 'bank_transfer', 'pix', 'bank_slip'])->default('credit_card');
             $table->timestamps();
         });
     }

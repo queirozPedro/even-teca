@@ -25,10 +25,10 @@ class AdminController extends Controller
 
     public function updateUser(Request $request, $id)
     {
-        $user = User::findOrFail($id);
+        $user = \App\Models\User::findOrFail($id);
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users,email,' . $user->id,
             'role' => 'required|in:user,organizer,admin',
         ]);
         $user->update($validated);

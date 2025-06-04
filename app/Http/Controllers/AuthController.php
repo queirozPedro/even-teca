@@ -65,7 +65,7 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
-            'role' => 'required|in:user,organizer',
+            'role' => 'required|in:user,organizer', // Não permite admin pelo registro comum
         ]);
 
         $user = \App\Models\User::create([
@@ -75,7 +75,7 @@ class AuthController extends Controller
             'role' => $validated['role'],
         ]);
 
-        Auth::login($user);
+        \Illuminate\Support\Facades\Auth::login($user);
 
         return redirect('/home');
     }

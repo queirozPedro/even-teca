@@ -11,11 +11,6 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    // Tipos de usuário
-    public const ROLE_USER = 'user';
-    public const ROLE_ADMIN = 'admin';
-    public const ROLE_ORGANIZER = 'organizer';
-
     /**
      * The attributes that are mass assignable.
      *
@@ -46,7 +41,6 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -54,17 +48,17 @@ class User extends Authenticatable
     // Métodos auxiliares para checar o tipo de usuário
     public function isAdmin(): bool
     {
-        return $this->role === self::ROLE_ADMIN;
+        return $this->role === 'admin';
     }
 
     public function isOrganizer(): bool
     {
-        return $this->role === self::ROLE_ORGANIZER;
+        return $this->role === 'organizer';
     }
 
     public function isUser(): bool
     {
-        return $this->role === self::ROLE_USER;
+        return $this->role === 'user';
     }
 
     public function events()

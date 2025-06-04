@@ -2,11 +2,15 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Editar Perfil</title>
+    <title>EvenTeca</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 <body>
-    <h1>Editar Perfil</h1>
+    <div style="width:100%; padding: 1.5rem 2rem 0 2rem;">
+        <h1 style="margin: 0; text-align: left;">
+            <a href="{{ url('/home') }}" style="text-decoration:none; color:inherit;">EvenTeca</a>
+        </h1>
+    </div>
     @if ($errors->any())
         <div class="error">
             <ul>
