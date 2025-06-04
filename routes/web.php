@@ -14,6 +14,8 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/home', [HomeController::class, 'index'])->middleware('auth');
+Route::get('/home/user', [HomeController::class, 'index'])->name('home.user')->middleware('auth');
+Route::get('/home/organizer', [HomeController::class, 'index'])->name('home.organizer')->middleware('auth');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/events', [EventController::class, 'index'])->name('events.index');

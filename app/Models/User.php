@@ -51,18 +51,18 @@ class User extends Authenticatable
         return $this->role === 'admin';
     }
 
-    public function isOrganizer(): bool
+    public function isOrganizer()
     {
         return $this->role === 'organizer';
     }
 
-    public function isUser(): bool
+    public function isUser()
     {
         return $this->role === 'user';
     }
 
-    public function events()
+    public function registrations()
     {
-        return $this->belongsToMany(Event::class, 'event_user');
+        return $this->hasMany(\App\Models\Registration::class);
     }
 }

@@ -12,7 +12,7 @@ class AuthController extends Controller
      */
     public function showLoginForm()
     {
-        return view('login');
+        return view('auth.login');
     }
 
     /**
@@ -27,7 +27,14 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
-            return redirect()->intended('/home');
+            $user = Auth::user();
+            if ($user->isOrganizer()) {
+                return redirect()->route('home.organizer');
+            } elseif ($user->isUser()) {
+                return redirect()->route('home.user');
+            } else {
+                return redirect('/home/organizer');
+            }
         }
 
         return back()->withErrors([
@@ -53,7 +60,7 @@ class AuthController extends Controller
      */
     public function showRegisterForm()
     {
-        return view('register');
+        return view('auth.register');
     }
 
     /**

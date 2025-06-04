@@ -4,6 +4,29 @@
     <meta charset="UTF-8">
     <title>EvenTeca</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <style>
+        .animate-fade-in {
+            animation: fadeIn 1s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        .login-title {
+            text-align: center;
+            margin: 2rem 0 1.5rem 0;
+        }
+
+        .login-title-link {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .login-error {
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <h1 class="login-title">
@@ -15,7 +38,7 @@
                 <ul class="list-disc pl-5">
                     @foreach ($errors->all() as $error)
                         @if ($error !== 'As credenciais informadas não conferem.')
-                            <li>{{ $error }}</li>
+                            <li class="text-red-600">{{ $error }}</li>
                         @endif
                     @endforeach
                 </ul>
@@ -39,7 +62,6 @@
             @if ($errors->has('email'))
                 <div class="w-full text-red-600 text-sm text-center mt-2 mb-2 login-error">
                     {{ $errors->first('email') }}
-                    As credenciais informadas não conferem.
                 </div>
             @endif
             <div class="flex items-center justify-between w-full">

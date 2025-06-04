@@ -1,12 +1,12 @@
 @import 'tailwindcss';
 
-@import './admin.css';
-@import './login.css';
-@import './eventos.css';
+@import './auth/login.css';
+@import './auth/register.css';
+@import './eventos/index.css';
+@import './eventos/create.css';
+@import './admin/admin.css';
+@import './perfil/perfil.css';
 @import './home.css';
-@import './register.css';
-@import './perfil.css';
-@import './my_registrations.css';
 
 /* Se quiser definir variáveis CSS, use :root */
 :root {

@@ -11,16 +11,16 @@ class AdminController extends Controller
     public function users()
     {
         $users = User::all();
-        $events = Event::with('users')->get();
-        return view('admin', compact('users', 'events'));
+        $events = Event::with('registrations.user')->get();
+        return view('admin.index', compact('users', 'events'));
     }
 
     public function editUser($id)
     {
         $users = User::all();
         $editUser = User::findOrFail($id);
-        $events = Event::with('users')->get();
-        return view('admin', compact('users', 'editUser', 'events'));
+        $events = Event::with('registrations.user')->get();
+        return view('admin.index', compact('users', 'editUser', 'events'));
     }
 
     public function updateUser(Request $request, $id)
@@ -45,21 +45,21 @@ class AdminController extends Controller
     public function events()
     {
         $users = User::all();
-        $events = Event::with('users')->get();
-        return view('admin', compact('users', 'events'));
+        $events = Event::with('registrations.user')->get();
+        return view('admin.index', compact('users', 'events'));
     }
     public function reports()
     {
         $user = auth()->user();
         if ($user->role === 'admin') {
-            $events = Event::withCount('users')->orderByDesc('users_count')->get();
+            $events = \App\Models\Event::withCount('registrations')->orderByDesc('registrations_count')->get();
         } else {
-            $events = Event::where('organizer_id', $user->id)
-                ->withCount('users')
-                ->orderByDesc('users_count')
+            $events = \App\Models\Event::where('organizer_id', $user->id)
+                ->withCount('registrations')
+                ->orderByDesc('registrations_count')
                 ->get();
         }
-        $users = User::all();
-        return view('admin', compact('users', 'events'));
+        $users = \App\Models\User::all();
+        return view('admin.index', compact('users', 'events'));
     }
 }

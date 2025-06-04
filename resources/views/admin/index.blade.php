@@ -4,7 +4,64 @@
     <meta charset="UTF-8">
     <title>EvenTeca</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <style>
+        .admin-header {
+            width: 100%;
+            padding: 1.5rem 2rem 0 2rem;
+        }
+
+        .admin-title {
+            margin: 0;
+            text-align: left;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: #fff;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 2px 12px #2563eb11;
+        }
+
+        .admin-table th, .admin-table td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        .admin-table th {
+            background: #e0e7ff;
+            color: #1e40af;
+            font-weight: 600;
+        }
+
+        .admin-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .admin-section-title {
+            margin-top: 2rem;
+            color: #2563eb;
+            font-size: 1.3rem;
+        }
+
+        .admin-btn {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-right: 0.5rem;
+        }
+        .admin-btn:hover {
+            background: #1d4ed8;
+        }
+    </style>
 </head>
 <body>
     <div class="admin-header">
@@ -77,8 +134,10 @@
             <td>{{ $event->organizer_id }}</td>
             <td>
                 <ul>
-                @foreach($event->users as $user)
-                    <li>{{ $user->name }} ({{ $user->email }}) - Status: {{ $user->pivot->status }}</li>
+                @foreach($event->registrations as $registration)
+                    <li>
+                        {{ $registration->user->name }} ({{ $registration->user->email }}) - Status: {{ $registration->status }}
+                    </li>
                 @endforeach
                 </ul>
             </td>
@@ -100,7 +159,7 @@
             <td>{{ $event->id }}</td>
             <td>{{ $event->title }}</td>
             <td>{{ $event->organizer_id }}</td>
-            <td>{{ $event->users_count ?? $event->users->count() }}</td>
+            <td>{{ $event->registrations_count ?? $event->registrations->count() }}</td>
         </tr>
         @endforeach
     </table>

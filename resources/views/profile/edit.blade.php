@@ -4,6 +4,47 @@
     <meta charset="UTF-8">
     <title>EvenTeca</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <style>
+        .profile-form {
+            max-width: 400px;
+            margin: 2rem auto;
+            background: #fff;
+            padding: 2rem;
+            border-radius: 1.2rem;
+            box-shadow: 0 4px 24px 0 #2563eb22;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .profile-form label {
+            font-weight: bold;
+        }
+        .profile-form input {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.6rem;
+            background: #f8fafc;
+            margin-top: 0.3rem;
+            margin-bottom: 0.7rem;
+            transition: border 0.2s;
+        }
+        .profile-form button {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 0.6rem;
+            padding: 0.7rem 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            margin-top: 0.5rem;
+        }
+        .profile-form button:hover {
+            background: #1d4ed8;
+            transform: scale(1.03);
+        }
+    </style>
 </head>
 <body>
     <div style="width:100%; padding: 1.5rem 2rem 0 2rem;">
@@ -11,6 +52,7 @@
             <a href="{{ url('/home') }}" style="text-decoration:none; color:inherit;">EvenTeca</a>
         </h1>
     </div>
+
     @if ($errors->any())
         <div class="error">
             <ul>

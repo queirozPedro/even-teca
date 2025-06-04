@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests; 
 use Illuminate\Http\Request;
 use App\Models\Event;
 use App\Notifications\RegistrationConfirmed;
@@ -11,6 +12,8 @@ use App\Notifications\EventReminder;
 
 class EventController extends Controller
 {
+    use AuthorizesRequests; 
+
     /**
      * Exibe a lista de eventos.
      */
@@ -27,7 +30,7 @@ class EventController extends Controller
             $query->whereDate('start_time', '>=', $request->start_time);
         }
         $events = $query->get();
-        return view('eventos', compact('events'));
+        return view('event.index', compact('events'));
     }
 
     /**
@@ -37,7 +40,7 @@ class EventController extends Controller
     {
         $events = Event::all();
         $createEvent = true;
-        return view('eventos', compact('events', 'createEvent'));
+        return view('event.create');
     }
 
     /**
@@ -60,7 +63,8 @@ class EventController extends Controller
 
         \App\Models\Event::create($validated);
 
-        return redirect()->route('events.index')->with('success', 'Evento criado com sucesso!');
+        // Redireciona para a home do organizador
+        return redirect()->route('home.organizer')->with('success', 'Evento criado com sucesso!');
     }
 
     /**
@@ -71,7 +75,7 @@ class EventController extends Controller
         $editEvent = \App\Models\Event::findOrFail($id);
         $this->authorize('update', $editEvent); // Adicione esta linha
         $events = \App\Models\Event::all();
-        return view('eventos', compact('events', 'editEvent'));
+        return view('event.edit', compact('events', 'editEvent'));
     }
 
     /**
@@ -80,7 +84,7 @@ class EventController extends Controller
     public function update(Request $request, string $id)
     {
         $event = \App\Models\Event::findOrFail($id);
-        $this->authorize('update', $event); // Adicione esta linha
+        $this->authorize('update', $event);
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -96,7 +100,8 @@ class EventController extends Controller
 
         $event->update($validated);
 
-        return redirect()->route('events.index')->with('success', 'Evento atualizado com sucesso!');
+        // Redireciona para a home do organizador
+        return redirect()->route('home.organizer')->with('success', 'Evento atualizado com sucesso!');
     }
 
     /**
@@ -115,14 +120,20 @@ class EventController extends Controller
      */
     public function subscribe(Event $event)
     {
-        if ($event->capacity !== null && $event->users()->count() >= $event->capacity) {
+        $user = auth()->user();
+        if ($event->capacity !== null && $event->registrations()->count() >= $event->capacity) {
             return back()->with('error', 'Event is full!');
         }
-        $user = auth()->user();
-        $event->users()->syncWithoutDetaching([
-            $user->id => ['status' => 'pending']
+
+        $registration = \App\Models\Registration::firstOrCreate([
+            'user_id' => $user->id,
+            'event_id' => $event->id,
+        ], [
+            'status' => 'pendente',
+            'registered_at' => now(),
         ]);
-        $user->notify(new RegistrationConfirmed($event));
+
+        $user->notify(new \App\Notifications\RegistrationConfirmed($event));
         return back()->with('success', 'Inscrição realizada! Aguarde aprovação do organizador.');
     }
 
@@ -132,7 +143,9 @@ class EventController extends Controller
     public function unsubscribe(Event $event)
     {
         $user = auth()->user();
-        $event->users()->detach($user->id);
+        \App\Models\Registration::where('user_id', $user->id)
+            ->where('event_id', $event->id)
+            ->delete();
         return back()->with('success', 'Inscrição cancelada com sucesso!');
     }
 
@@ -141,10 +154,8 @@ class EventController extends Controller
      */
     public function attendees(Event $event)
     {
-        $attendees = $event->users()->withPivot('status')->get();
-        $attendeesEvent = $event;
-        $events = Event::all();
-        return view('eventos', compact('events', 'attendees', 'attendeesEvent'));
+        $attendees = $event->registrations()->with('user')->get();
+        return view('partials.attendees_list', compact('attendees', 'event'));
     }
 
     /**
@@ -152,10 +163,12 @@ class EventController extends Controller
      */
     public function approveRegistration(Event $event, $userId)
     {
-        // $this->authorize('manage-events');
-        $event->users()->updateExistingPivot($userId, ['status' => 'confirmed']);
+        $registration = \App\Models\Registration::where('user_id', $userId)
+            ->where('event_id', $event->id)
+            ->firstOrFail();
+        $registration->update(['status' => 'confirmado']);
         $user = \App\Models\User::find($userId);
-        $user->notify(new RegistrationApproved($event));
+        $user->notify(new \App\Notifications\RegistrationApproved($event));
         return back()->with('success', 'Inscrição aprovada!');
     }
 
@@ -164,10 +177,12 @@ class EventController extends Controller
      */
     public function rejectRegistration(Event $event, $userId)
     {
-        // $this->authorize('manage-events');
-        $event->users()->updateExistingPivot($userId, ['status' => 'rejected']);
+        $registration = \App\Models\Registration::where('user_id', $userId)
+            ->where('event_id', $event->id)
+            ->firstOrFail();
+        $registration->update(['status' => 'cancelado']);
         $user = \App\Models\User::find($userId);
-        $user->notify(new RegistrationRejected($event));
+        $user->notify(new \App\Notifications\RegistrationRejected($event));
         return back()->with('success', 'Inscrição rejeitada!');
     }
 
@@ -176,9 +191,9 @@ class EventController extends Controller
      */
     public function sendReminders()
     {
-        foreach (Event::whereDate('start_time', now()->addDay())->get() as $event) {
-            foreach ($event->users as $user) {
-                $user->notify(new EventReminder($event));
+        foreach (\App\Models\Event::whereDate('start_time', now()->addDay())->get() as $event) {
+            foreach ($event->registrations()->with('user')->get() as $registration) {
+                $registration->user->notify(new \App\Notifications\EventReminder($event));
             }
         }
     }
@@ -190,7 +205,7 @@ class EventController extends Controller
     {
         $showEvent = \App\Models\Event::findOrFail($id);
         $events = \App\Models\Event::all();
-        return view('eventos', compact('events', 'showEvent'));
+        return view('event.show', compact('events', 'showEvent'));
     }
 
     /**
@@ -201,5 +216,15 @@ class EventController extends Controller
         $eventToDelete = \App\Models\Event::findOrFail($id);
         $events = \App\Models\Event::all();
         return view('eventos', compact('events', 'eventToDelete'));
+    }
+
+    /**
+     * Exibe as inscrições do usuário.
+     */
+    public function myRegistrations()
+    {
+        $user = auth()->user();
+        $registrations = $user->registrations()->with('event')->get();
+        return view('events.my_registrations', compact('registrations'));
     }
 }

@@ -22,13 +22,13 @@ class Event extends Model
         'end_time' => 'datetime',
     ];
 
-    public function users()
-    {
-        return $this->belongsToMany(\App\Models\User::class, 'event_user');
-    }
-
     public function organizer()
     {
         return $this->belongsTo(\App\Models\User::class, 'organizer_id');
+    }
+    
+    public function registrations()
+    {
+        return $this->hasMany(\App\Models\Registration::class);
     }
 }

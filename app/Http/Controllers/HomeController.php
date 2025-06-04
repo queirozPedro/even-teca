@@ -8,21 +8,42 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $events = \App\Models\Event::all();
-        return view('home', compact('events'));
+        $user = auth()->user();
+
+        if ($user->isOrganizer()) {
+            $events = \App\Models\Event::where('organizer_id', $user->id)->get();
+            return view('home.organizer', [
+                'events' => $events,
+                'isOrganizer' => true,
+            ]);
+        }
+
+        if ($user->isUser()) {
+            $registrations = $user->registrations()->with('event')->get();
+            $inscritosIds = $registrations->pluck('event_id')->toArray();
+            $eventsDisponiveis = \App\Models\Event::whereNotIn('id', $inscritosIds)->get();
+
+            return view('home.user', [
+                'eventsDisponiveis' => $eventsDisponiveis,
+                'registrations' => $registrations,
+            ]);
+        }
+
+        // fallback
+        return view('home.organizer');
     }
     
     public function myRegistrations()
     {
         $user = auth()->user();
-        $events = $user->events()->withPivot('status')->get();
-        return view('my_registrations', compact('events'));
+        $registrations = $user->registrations()->with('event')->get();
+        return view('my_registrations', compact('registrations'));
     }
     
     public function editProfile()
     {
         $user = auth()->user();
-        return view('edit_profile', compact('user'));
+        return view('profile.edit', compact('user'));
     }
 
     public function updateProfile(Request $request)
