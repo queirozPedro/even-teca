@@ -10,9 +10,29 @@ use App\Notifications\RegistrationApproved;
 use App\Notifications\RegistrationRejected;
 use App\Notifications\EventReminder;
 
-class EventController extends Controller
+class EventController extends Controller {
+    /**
+     * Realiza o pagamento de uma inscrição (muda status para 'confirmado').
+     */
+use AuthorizesRequests; 
+
+/**
+ * Realiza o pagamento de uma inscrição (muda status para 'confirmado').
+ */
+public function payRegistration($registrationId)
 {
-    use AuthorizesRequests; 
+    $registration = \App\Models\Registration::findOrFail($registrationId);
+    // Garante que o usuário só pode pagar sua própria inscrição
+    if ($registration->user_id !== auth()->id()) {
+        abort(403);
+    }
+    if ($registration->status === 'pendente') {
+        $registration->status = 'confirmado';
+        $registration->save();
+        return back()->with('success', 'Pagamento realizado com sucesso!');
+    }
+    return back()->with('info', 'Inscrição já está confirmada ou não pode ser paga.');
+}
 
     /**
      * Exibe a lista de eventos.

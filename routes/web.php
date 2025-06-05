@@ -22,6 +22,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/my-registrations', [HomeController::class, 'myRegistrations'])->name('my.registrations');
     Route::get('/profile/edit', [HomeController::class, 'editProfile'])->name('profile.edit');
     Route::post('/profile/update', [HomeController::class, 'updateProfile'])->name('profile.update');
+
+    // Pagamento de inscrição
+    Route::post('/registrations/{registration}/pay', [EventController::class, 'payRegistration'])->name('registrations.pay');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
