@@ -248,7 +248,10 @@
 <body>
     <div class="header">
         <div class="logo"><i class="fa-solid fa-calendar-days"></i> EvenTeca</div>
-        <a href="{{ url('/home/user') }}" class="btn-primario" style="display: flex; align-items: center; gap: 0.5rem; font-weight: bold; color: #2563eb; background: none; border: none; font-size: 1.1rem; text-decoration: none; padding: 0; box-shadow: none;"><i class="fa-solid fa-house"></i> Início</a>
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <a href="{{ url('/home/user') }}" class="btn-primario" style="display: flex; align-items: center; gap: 0.5rem; font-weight: bold; color: #2563eb; background: none; border: none; font-size: 1.1rem; text-decoration: none; padding: 0; box-shadow: none;"><i class="fa-solid fa-house"></i> Início</a>
+            <a href="{{ route('payments.user') }}" class="btn-primario" style="display: flex; align-items: center; gap: 0.5rem; font-weight: bold; color: #2563eb; background: none; border: none; font-size: 1.1rem; text-decoration: none; padding: 0; box-shadow: none;"><i class="fa-solid fa-money-check-dollar"></i> Pagamentos</a>
+        </div>
         <div style="display: flex; align-items: center; gap: 2rem;">
             <div class="user-actions">
                 <span><i class="fa-solid fa-user"></i> {{ Auth::user()->name }}</span>

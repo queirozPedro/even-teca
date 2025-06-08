@@ -255,6 +255,7 @@
         <div class="logo"><i class="fa-solid fa-calendar-days"></i> EvenTeca</div>
         <div>
             <a href="{{ url('/home/organizer') }}" class="btn-primario" style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: bold; color: #2563eb; background: none; border: none; font-size: 1.1rem; text-decoration: none; padding: 0; box-shadow: none; margin-right: 1.5rem;"><i class="fa-solid fa-house"></i> Início</a>
+            <a href="{{ route('payments.organizer') }}" class="btn-primario" style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: bold; color: #2563eb; background: none; border: none; font-size: 1.1rem; text-decoration: none; padding: 0; box-shadow: none; margin-right: 1.5rem;"><i class="fa-solid fa-money-check-dollar"></i> Pagamentos</a>
             <button id="openSearchBar" class="btn-primario" style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: bold; color: #2563eb; background: none; border: none; font-size: 1.1rem; text-decoration: none; padding: 0; box-shadow: none; margin-right: 1.5rem; cursor:pointer;"><i class="fa-solid fa-magnifying-glass"></i> Buscar</button>
             <a href="#" id="openCreateEventModal" class="btn-primario" style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: bold; color: #2563eb; background: none; border: none; font-size: 1.1rem; text-decoration: none; padding: 0; box-shadow: none;"><i class="fa-solid fa-plus"></i> Novo Evento</a>
             <form id="searchBarForm" method="GET" action="{{ route('events.index') }}" style="display:none; position:absolute; left:50%; top:60px; transform:translateX(-50%); background:#fff; box-shadow:0 2px 8px #0002; border-radius:8px; padding:0.7rem 1.2rem; z-index:3000; flex-direction:row; align-items:center; gap:0.7rem; min-width:320px;">
@@ -320,18 +321,17 @@
             @else
                 <ul class="event-grid">
                     @foreach($events as $event)
-                        <a href="{{ route('event.organizer.show', $event->id) }}" style="text-decoration:none; color:inherit;">
-                        <li class="event-card">
-                            <div class="event-banner">
+                        <li class="event-card" onclick="openOrganizerEventModal({{ $event->id }}, '{{ addslashes($event->title) }}', '{{ addslashes($event->description) }}', '{{ $event->start_time }}', '{{ $event->end_time }}', '{{ addslashes($event->location) }}', '{{ $event->capacity }}', '{{ $event->price }}')">
+                            <div class="event-banner" onclick="event.stopPropagation(); openOrganizerEventModal({{ $event->id }}, '{{ addslashes($event->title) }}', '{{ addslashes($event->description) }}', '{{ $event->start_time }}', '{{ $event->end_time }}', '{{ addslashes($event->location) }}', '{{ $event->capacity }}', '{{ $event->price }}')">
                                 <i class="fa-solid fa-calendar-check"></i>
                             </div>
-                            <div class="event-content">
+                            <div class="event-content" onclick="event.stopPropagation(); openOrganizerEventModal({{ $event->id }}, '{{ addslashes($event->title) }}', '{{ addslashes($event->description) }}', '{{ $event->start_time }}', '{{ $event->end_time }}', '{{ addslashes($event->location) }}', '{{ $event->capacity }}', '{{ $event->price }}')">
                                 <div class="event-title">{{ $event->title }}</div>
                                 <div class="event-description">{{ $event->description }}</div>
                                 <div class="event-info">
-                                    <span><i class="fa-solid fa-clock"></i> {{ $event->start_time->format('d/m/Y H:i') }}</span>
+                                    <span><i class="fa-solid fa-clock"></i> {{ \Carbon\Carbon::parse($event->start_time)->format('d/m/Y H:i') }}</span>
                                     @if($event->end_time)
-                                    <span><i class="fa-solid fa-hourglass-end"></i> {{ $event->end_time->format('d/m/Y H:i') }}</span>
+                                    <span><i class="fa-solid fa-hourglass-end"></i> {{ \Carbon\Carbon::parse($event->end_time)->format('d/m/Y H:i') }}</span>
                                     @endif
                                     <span><i class="fa-solid fa-location-dot"></i> {{ $event->location }}</span>
                                     @if($event->capacity)
@@ -340,21 +340,52 @@
                                     <span><i class="fa-solid fa-money-bill-wave"></i> R$ {{ number_format($event->price, 2, ',', '.') }}</span>
                                 </div>
                                 <div class="event-actions">
-                    <a href="#" class="edit-event-btn" data-id="{{ $event->id }}" data-title="{{ $event->title }}" data-description="{{ $event->description }}" data-start_time="{{ $event->start_time->format('Y-m-d\TH:i') }}" data-end_time="{{ optional($event->end_time)->format('Y-m-d\TH:i') }}" data-location="{{ $event->location }}" data-capacity="{{ $event->capacity }}" data-price="{{ $event->price }}"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
-                    <a href="{{ route('events.destroy', $event) }}" class="delete" onclick="event.preventDefault(); if(confirm('Tem certeza que deseja excluir este evento?')){ document.getElementById('delete-event-{{ $event->id }}').submit(); }"><i class="fa-solid fa-trash"></i> Excluir</a>
-                    <a href="#" class="attendees-btn" data-event-id="{{ $event->id }}" style="color:#22c55e; background:#dcfce7;"><i class="fa-solid fa-users"></i> Visualizar Participantes</a>
-                    <form id="delete-event-{{ $event->id }}" action="{{ route('events.destroy', $event) }}" method="POST" style="display:none;">
-                         @csrf
-                         @method('DELETE')
-                    </form>
+                                    <a href="#" class="edit-event-btn" data-id="{{ $event->id }}" data-title="{{ $event->title }}" data-description="{{ $event->description }}" data-start_time="{{ $event->start_time->format('Y-m-d\TH:i') }}" data-end_time="{{ optional($event->end_time)->format('Y-m-d\TH:i') }}" data-location="{{ $event->location }}" data-capacity="{{ $event->capacity }}" data-price="{{ $event->price }}"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
+                                    <a href="{{ route('events.destroy', $event) }}" class="delete" onclick="event.preventDefault(); if(confirm('Tem certeza que deseja excluir este evento?')){ document.getElementById('delete-event-{{ $event->id }}').submit(); }"><i class="fa-solid fa-trash"></i> Excluir</a>
+                                    <a href="#" class="attendees-btn" data-event-id="{{ $event->id }}" style="color:#22c55e; background:#dcfce7;"><i class="fa-solid fa-users"></i> Visualizar Participantes</a>
+                                    <form id="delete-event-{{ $event->id }}" action="{{ route('events.destroy', $event) }}" method="POST" style="display:none;">
+                                         @csrf
+                                         @method('DELETE')
+                                    </form>
                                 </div>
                             </div>
                         </li>
-                        </a>
                     @endforeach
                 </ul>
             @endif
             <!-- Modal de edição de evento -->
+        <!-- Modal de visualização de evento para organizador -->
+        <div id="eventOrganizerModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(30,41,59,0.5); z-index:1000; align-items:center; justify-content:center;">
+            <div style="background:#fff; border-radius:1rem; padding:2rem; min-width:320px; max-width:90vw; max-height:90vh; box-shadow:0 6px 32px #0003; position:relative; overflow-y:auto;">
+                <button type="button" onclick="closeOrganizerEventModal()" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; color:#888; cursor:pointer;">&times;</button>
+                <h2 id="event-organizer-modal-title" style="margin-bottom:1rem;"></h2>
+                <div style="margin-bottom:1rem;">
+                    <strong>Descrição:</strong>
+                    <div id="event-organizer-modal-description"></div>
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <strong>Início:</strong> <span id="event-organizer-modal-start"></span>
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <strong>Fim:</strong> <span id="event-organizer-modal-end"></span>
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <strong>Local:</strong> <span id="event-organizer-modal-location"></span>
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <strong>Capacidade:</strong> <span id="event-organizer-modal-capacity"></span>
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <strong>Preço:</strong> R$ <span id="event-organizer-modal-price"></span>
+                </div>
+                <div style="margin-top:2rem; display:flex; gap:1rem; flex-wrap:wrap;">
+                    <a href="#" class="edit-event-btn btn-primario" id="modal-edit-btn" style="background:#e0e7ff; color:#2563eb; border-radius:6px; padding:0.4rem 1rem; font-weight:bold; text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem;"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
+                    <a href="#" class="delete btn-primario" id="modal-delete-btn" style="background:#fee2e2; color:#b91c1c; border-radius:6px; padding:0.4rem 1rem; font-weight:bold; text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem;"><i class="fa-solid fa-trash"></i> Excluir</a>
+                    <a href="#" class="attendees-btn btn-primario" id="modal-attendees-btn" style="background:#dcfce7; color:#22c55e; border-radius:6px; padding:0.4rem 1rem; font-weight:bold; text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem;"><i class="fa-solid fa-users"></i> Visualizar Participantes</a>
+                </div>
+            </div>
+        </div>
+
         <!-- Modal de inscritos do evento -->
         <div id="attendeesModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(30,41,59,0.5); z-index:1000; align-items:center; justify-content:center;">
             <div id="attendeesModalContent" style="background:#fff; border-radius:1rem; padding:2rem; min-width:320px; max-width:90vw; max-height:90vh; box-shadow:0 6px 32px #0003; position:relative; overflow-y:auto;">

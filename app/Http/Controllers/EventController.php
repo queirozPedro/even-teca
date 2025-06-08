@@ -29,6 +29,15 @@ public function payRegistration($registrationId)
     if ($registration->status === 'pendente') {
         $registration->status = 'confirmado';
         $registration->save();
+
+        // Cria o registro de pagamento se ainda não existir
+        if (!$registration->payment) {
+            \App\Models\Payment::create([
+                'registration_id' => $registration->id,
+                'amount' => $registration->event->price ?? 0,
+            ]);
+        }
+
         return back()->with('success', 'Pagamento realizado com sucesso!');
     }
     return back()->with('info', 'Inscrição já está confirmada ou não pode ser paga.');
