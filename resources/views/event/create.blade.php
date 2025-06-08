@@ -64,6 +64,10 @@
                 <input type="text" name="title" id="title" required class="form-control" value="{{ old('title') }}">
             </div>
             <div>
+                <label for="category">Categoria</label>
+                <input type="text" name="category" id="category" class="form-control" value="{{ old('category') }}" placeholder="Ex: Tecnologia, Saúde, Educação...">
+            </div>
+            <div>
                 <label for="description">Descrição</label>
                 <textarea name="description" id="description" class="form-control">{{ old('description') }}</textarea>
             </div>

@@ -117,11 +117,26 @@
         }
         .event-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(4, minmax(320px, 1fr));
             gap: 2rem;
             list-style: none;
             padding: 0;
             margin: 2rem 0;
+        }
+        @media (max-width: 1500px) {
+            .event-grid {
+                grid-template-columns: repeat(3, minmax(320px, 1fr));
+            }
+        }
+        @media (max-width: 1100px) {
+            .event-grid {
+                grid-template-columns: repeat(2, minmax(320px, 1fr));
+            }
+        }
+        @media (max-width: 700px) {
+            .event-grid {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
         }
         .event-card {
             background: #fff;
@@ -132,6 +147,8 @@
             display: flex;
             flex-direction: column;
             min-height: 320px;
+            width: 350px;
+            max-width: 100%;
             transition: box-shadow 0.2s, transform 0.1s, border 0.2s;
             cursor: pointer;
             border: 2px solid transparent;

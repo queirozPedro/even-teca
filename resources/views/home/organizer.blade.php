@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>EvenTeca</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
@@ -118,11 +117,28 @@
         }
         .event-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(4, minmax(320px, 1fr));
             gap: 2rem;
             list-style: none;
             padding: 0;
             margin: 2rem 0;
+            width: 100%;
+        }
+        @media (max-width: 1500px) {
+            .event-grid {
+                grid-template-columns: repeat(3, minmax(320px, 1fr));
+            }
+        }
+        @media (max-width: 1100px) {
+            .event-grid {
+                grid-template-columns: repeat(2, minmax(320px, 1fr));
+            }
+        }
+        @media (max-width: 700px) {
+            .event-grid {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+        }
         }
         .event-card {
             background: #fff;
@@ -239,7 +255,50 @@
         <div class="logo"><i class="fa-solid fa-calendar-days"></i> EvenTeca</div>
         <div>
             <a href="{{ url('/home/organizer') }}" class="btn-primario" style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: bold; color: #2563eb; background: none; border: none; font-size: 1.1rem; text-decoration: none; padding: 0; box-shadow: none; margin-right: 1.5rem;"><i class="fa-solid fa-house"></i> Início</a>
+            <button id="openSearchBar" class="btn-primario" style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: bold; color: #2563eb; background: none; border: none; font-size: 1.1rem; text-decoration: none; padding: 0; box-shadow: none; margin-right: 1.5rem; cursor:pointer;"><i class="fa-solid fa-magnifying-glass"></i> Buscar</button>
             <a href="#" id="openCreateEventModal" class="btn-primario" style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: bold; color: #2563eb; background: none; border: none; font-size: 1.1rem; text-decoration: none; padding: 0; box-shadow: none;"><i class="fa-solid fa-plus"></i> Novo Evento</a>
+            <form id="searchBarForm" method="GET" action="{{ route('events.index') }}" style="display:none; position:absolute; left:50%; top:60px; transform:translateX(-50%); background:#fff; box-shadow:0 2px 8px #0002; border-radius:8px; padding:0.7rem 1.2rem; z-index:3000; flex-direction:row; align-items:center; gap:0.7rem; min-width:320px;">
+                <input type="text" name="search" id="searchInput" placeholder="Buscar eventos..." style="padding:0.4rem 1rem; border-radius:6px; border:1px solid #cbd5e1; font-size:1rem; min-width:120px;">
+                <button type="button" id="openFiltersDropdown" style="background:none; border:none; color:#2563eb; font-size:1.2rem; cursor:pointer;"><i class="fa-solid fa-sliders"></i></button>
+                <button type="submit" class="btn-primario" style="padding:0.4rem 1.2rem;">Buscar</button>
+                <div id="filtersDropdown" style="display:none; position:absolute; top:2.5rem; left:0; background:#fff; box-shadow:0 2px 8px #0002; border-radius:8px; padding:1rem; z-index:3100; min-width:220px;">
+                    <div style="margin-bottom:0.7rem;">
+                        <label for="filterCategory" style="font-weight:bold;">Categoria</label>
+                        <input type="text" name="category" id="filterCategory" class="form-control" style="width:100%;">
+                    </div>
+                    <div style="margin-bottom:0.7rem;">
+                        <label for="filterLocation" style="font-weight:bold;">Local</label>
+                        <input type="text" name="location" id="filterLocation" class="form-control" style="width:100%;">
+                    </div>
+                    <div style="margin-bottom:0.7rem;">
+                        <label for="filterDate" style="font-weight:bold;">Data a partir de</label>
+                        <input type="date" name="start_time" id="filterDate" class="form-control" style="width:100%;">
+                    </div>
+                </div>
+            </form>
+<script>
+    // Search bar logic
+    const openSearchBarBtn = document.getElementById('openSearchBar');
+    const searchBarForm = document.getElementById('searchBarForm');
+    const openFiltersDropdownBtn = document.getElementById('openFiltersDropdown');
+    const filtersDropdown = document.getElementById('filtersDropdown');
+    let filtersOpen = false;
+    openSearchBarBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        searchBarForm.style.display = searchBarForm.style.display === 'flex' ? 'none' : 'flex';
+        filtersDropdown.style.display = 'none';
+    });
+    openFiltersDropdownBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        filtersDropdown.style.display = filtersDropdown.style.display === 'block' ? 'none' : 'block';
+    });
+    document.addEventListener('click', function(e) {
+        if (!searchBarForm.contains(e.target) && e.target !== openSearchBarBtn) {
+            searchBarForm.style.display = 'none';
+            filtersDropdown.style.display = 'none';
+        }
+    });
+</script>
         </div>
         <div style="display: flex; align-items: center; gap: 2rem;">
             <div class="user-actions">
@@ -261,6 +320,7 @@
             @else
                 <ul class="event-grid">
                     @foreach($events as $event)
+                        <a href="{{ route('event.organizer.show', $event->id) }}" style="text-decoration:none; color:inherit;">
                         <li class="event-card">
                             <div class="event-banner">
                                 <i class="fa-solid fa-calendar-check"></i>
@@ -290,6 +350,7 @@
                                 </div>
                             </div>
                         </li>
+                        </a>
                     @endforeach
                 </ul>
             @endif
@@ -312,6 +373,10 @@
                         <div style="margin-bottom:1rem;">
                             <label for="edit-title">Título:</label>
                             <input type="text" name="title" id="edit-title" class="form-control" required style="width:100%;">
+                        </div>
+                        <div style="margin-bottom:1rem;">
+                            <label for="edit-category">Categoria:</label>
+                            <input type="text" name="category" id="edit-category" class="form-control" style="width:100%;" placeholder="Ex: Tecnologia, Saúde, Educação...">
                         </div>
                         <div style="margin-bottom:1rem;">
                             <label for="edit-description">Descrição:</label>
@@ -351,6 +416,10 @@
                         <div style="margin-bottom:1rem;">
                             <label for="create-title">Título:</label>
                             <input type="text" name="title" id="create-title" class="form-control" required style="width:100%;">
+                        </div>
+                        <div style="margin-bottom:1rem;">
+                            <label for="create-category">Categoria:</label>
+                            <input type="text" name="category" id="create-category" class="form-control" style="width:100%;" placeholder="Ex: Tecnologia, Saúde, Educação...">
                         </div>
                         <div style="margin-bottom:1rem;">
                             <label for="create-description">Descrição:</label>

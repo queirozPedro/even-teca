@@ -6,6 +6,12 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\AdminController;
 
+// Rotas de detalhes de evento para usuário e organizador
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/event/user/{event}', [EventController::class, 'showUserEvent'])->name('event.user.show');
+    Route::get('/event/organizer/{event}', [EventController::class, 'showOrganizerEvent'])->name('event.organizer.show');
+});
+
 Route::get('/', function () {
     return redirect()->route('login');
 });

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('location')->nullable();
             $table->unsignedBigInteger('organizer_id')->nullable(); 
             $table->integer('capacity')->nullable(); 
+            $table->string('category')->nullable()->after('description');
             $table->decimal('price', 8, 2)->default(0); 
             $table->timestamps();
             $table->foreign('organizer_id')->references('id')->on('users')->onDelete('set null'); 

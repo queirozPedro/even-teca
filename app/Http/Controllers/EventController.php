@@ -145,16 +145,23 @@ public function payRegistration($registrationId)
             return back()->with('error', 'Event is full!');
         }
 
+        // Recebe o método de pagamento do formulário (simulação)
+        $paymentMethod = request('payment_method', 'credit_card');
+
+        // Aqui você pode salvar o método de pagamento na inscrição, se desejar (ex: campo extra na tabela registrations)
+        // Por enquanto, só simula o recebimento
+
         $registration = \App\Models\Registration::firstOrCreate([
             'user_id' => $user->id,
             'event_id' => $event->id,
         ], [
             'status' => 'pendente',
             'registered_at' => now(),
+            // 'payment_method' => $paymentMethod, // se quiser adicionar no banco
         ]);
 
         $user->notify(new \App\Notifications\RegistrationConfirmed($event));
-        return back()->with('success', 'Inscrição realizada! Aguarde aprovação do organizador.');
+        return back()->with('success', 'Inscrição realizada! Método de pagamento escolhido: ' . ucfirst($paymentMethod) . '. Aguarde aprovação do organizador.');
     }
 
     /**
@@ -246,5 +253,30 @@ public function payRegistration($registrationId)
         $user = auth()->user();
         $registrations = $user->registrations()->with('event')->get();
         return view('events.my_registrations', compact('registrations'));
+    }
+
+    /**
+     * Exibe detalhes do evento para usuário comum.
+     */
+    public function showUserEvent($id)
+    {
+        $event = Event::findOrFail($id);
+        $user = auth()->user();
+        $registration = null;
+        if ($user) {
+            $registration = \App\Models\Registration::where('user_id', $user->id)
+                ->where('event_id', $event->id)
+                ->first();
+        }
+        return view('event.show_user', compact('event', 'registration'));
+    }
+
+    /**
+     * Exibe detalhes do evento para organizador.
+     */
+    public function showOrganizerEvent($id)
+    {
+        $event = Event::findOrFail($id);
+        return view('event.show_organizer', compact('event'));
     }
 }
