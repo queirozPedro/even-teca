@@ -48,7 +48,12 @@ public function payRegistration($registrationId)
      */
     public function index(Request $request)
     {
+        $user = auth()->user();
         $query = Event::query();
+        // Se for organizador, filtra só os eventos dele
+        if ($user && $user->isOrganizer()) {
+            $query->where('organizer_id', $user->id);
+        }
         if ($request->filled('category')) {
             $query->where('category', $request->category);
         }

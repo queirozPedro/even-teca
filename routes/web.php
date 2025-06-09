@@ -9,11 +9,18 @@ use App\Http\Controllers\AdminController;
 // Rotas de detalhes de evento para usuário e organizador
 
 // Histórico de pagamentos
+
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\RegistrationController;
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/event/user/{event}', [EventController::class, 'showUserEvent'])->name('event.user.show');
-    Route::get('/event/organizer/{event}', [EventController::class, 'showOrganizerEvent'])->name('event.organizer.show');
+    // Novo fluxo de inscrição em evento
+    Route::get('/registrations/event/{event}', [RegistrationController::class, 'show'])->name('registrations.show');
+    Route::post('/registrations/event/{event}/subscribe', [RegistrationController::class, 'subscribe'])->name('registrations.subscribe');
+    Route::post('/registrations/event/{event}/unsubscribe', [RegistrationController::class, 'unsubscribe'])->name('registrations.unsubscribe');
+    Route::get('/registrations/event/{event}/payment', [RegistrationController::class, 'payment'])->name('registrations.payment');
+    Route::post('/registrations/event/{event}/pay', [RegistrationController::class, 'pay'])->name('registrations.pay');
 
     // Histórico de pagamentos do usuário
     Route::get('/payments/user', [PaymentController::class, 'userHistory'])->name('payments.user');
@@ -38,8 +45,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile/edit', [HomeController::class, 'editProfile'])->name('profile.edit');
     Route::post('/profile/update', [HomeController::class, 'updateProfile'])->name('profile.update');
 
-    // Pagamento de inscrição
-    Route::post('/registrations/{registration}/pay', [EventController::class, 'payRegistration'])->name('registrations.pay');
+    // Pagamento de inscrição (mantido apenas pelo RegistrationController)
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

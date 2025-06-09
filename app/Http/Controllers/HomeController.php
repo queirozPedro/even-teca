@@ -19,7 +19,8 @@ class HomeController extends Controller
         }
 
         if ($user->isUser()) {
-            $registrations = $user->registrations()->with('event')->get();
+            // Considere como "inscrito" apenas inscrições que NÃO estão canceladas
+            $registrations = $user->registrations()->with('event')->where('status', '!=', 'cancelado')->get();
             $inscritosIds = $registrations->pluck('event_id')->toArray();
             $eventsDisponiveis = \App\Models\Event::whereNotIn('id', $inscritosIds)->get();
 
@@ -37,7 +38,7 @@ class HomeController extends Controller
     {
         $user = auth()->user();
         $registrations = $user->registrations()->with('event')->get();
-        return view('my_registrations', compact('registrations'));
+        return view('registrations.my_registrations', compact('registrations'));
     }
     
     public function editProfile()

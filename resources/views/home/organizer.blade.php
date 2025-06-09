@@ -353,8 +353,6 @@
                     @endforeach
                 </ul>
             @endif
-            <!-- Modal de edição de evento -->
-        <!-- Modal de visualização de evento para organizador -->
         <div id="eventOrganizerModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(30,41,59,0.5); z-index:1000; align-items:center; justify-content:center;">
             <div style="background:#fff; border-radius:1rem; padding:2rem; min-width:320px; max-width:90vw; max-height:90vh; box-shadow:0 6px 32px #0003; position:relative; overflow-y:auto;">
                 <button type="button" onclick="closeOrganizerEventModal()" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; color:#888; cursor:pointer;">&times;</button>
@@ -540,13 +538,8 @@
                     document.getElementById('create-price').value = '';
                     document.getElementById('createEventModal').style.display = 'flex';
                 });
-                document.getElementById('createEventModal').addEventListener('click', function(e) {
-                    if (e.target === this) closeCreateModal();
-                });
             </script>
         </div>
-        <!-- Sidebar direita -->
-
     </div>
 </body>
 </html>

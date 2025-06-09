@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('event_id')->constrained()->onDelete('cascade');
             $table->timestamp('registered_at')->useCurrent();
-            $table->enum('status', ['confirmado', 'pendente', 'cancelado'])->default('confirmado');
+            $table->enum('status', ['pending', 'completed', 'canceled'])->default('pending');
             $table->timestamps();
         });
     }

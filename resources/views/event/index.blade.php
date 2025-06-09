@@ -81,7 +81,7 @@
                     <div class="event-content">
                         <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
                             <div class="event-title" style="margin-bottom: 0;">{{ $event->title }}</div>
-                            <a href="{{ route('event.user.show', $event->id) }}" class="btn-primario" style="font-size: 0.98rem; padding: 0.3rem 1rem; border-radius: 6px; text-decoration: none;">Ver detalhes</a>
+                            <a href="{{ route('events.show', $event->id) }}" class="btn-primario" style="font-size: 0.98rem; padding: 0.3rem 1rem; border-radius: 6px; text-decoration: none;">Ver detalhes</a>
                         </div>
                         <div class="event-description">{{ $event->description }}</div>
                         <div class="event-info">

@@ -136,7 +136,7 @@
                 <ul>
                 @foreach($event->registrations as $registration)
                     <li>
-                        {{ $registration->user->name }} ({{ $registration->user->email }}) - Status: {{ $registration->status }}
+                        {{ $registration->user->name }} ({{ $registration->user->email }}) - Status: {{ registrationStatusPt($registration->status) }}
                     </li>
                 @endforeach
                 </ul>

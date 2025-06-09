@@ -1,3 +1,18 @@
+@php
+    if (!function_exists('registrationStatusPt')) {
+        function registrationStatusPt($status) {
+            return match ($status) {
+                'pending' => 'Pendente',
+                'completed' => 'Confirmado',
+                'canceled' => 'Cancelado',
+                'pendente' => 'Pendente',
+                'confirmado' => 'Confirmado',
+                'cancelado' => 'Cancelado',
+                default => ucfirst($status),
+            };
+        }
+    }
+@endphp
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>

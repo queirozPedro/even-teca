@@ -10,7 +10,7 @@
                     <span style="font-weight:500; color:#334155;">{{ $registration->user->name }}</span>
                     <span style="color:#64748b; font-size:0.95rem;">({{ $registration->user->email }})</span>
                     <span style="margin-left:auto; color:#22c55e; font-size:0.95rem;">
-                        {{ ucfirst($registration->status) }}
+                        {{ registrationStatusPt($registration->status) }}
                     </span>
                 </li>
             @endforeach

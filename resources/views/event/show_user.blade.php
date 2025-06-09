@@ -71,7 +71,7 @@
         <div style="margin-top:2rem; text-align:center;">
             @if($registration)
                 <div style="margin-bottom:1rem;">
-                    <span>Status da inscrição: <strong>{{ ucfirst($registration->status) }}</strong></span>
+                    <span>Status da inscrição: <strong>{{ registrationStatusPt($registration->status) }}</strong></span>
                 </div>
                 @if($registration->status === 'pendente')
                     <form method="POST" action="{{ route('registrations.pay', $registration->id) }}" style="display:inline;">

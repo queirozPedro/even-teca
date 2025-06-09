@@ -272,11 +272,11 @@
             @else
                 <ul class="event-grid">
                     @foreach($eventsDisponiveis as $event)
-                        <li class="event-card" onclick="openEventModal({{ $event->id }}, '{{ addslashes($event->title) }}', '{{ addslashes($event->description) }}', '{{ $event->start_time }}', '{{ $event->end_time }}', '{{ addslashes($event->location) }}', '{{ $event->capacity }}', '{{ $event->price }}', false)">
-                            <div class="event-banner" onclick="event.stopPropagation(); openEventModal({{ $event->id }}, '{{ addslashes($event->title) }}', '{{ addslashes($event->description) }}', '{{ $event->start_time }}', '{{ $event->end_time }}', '{{ addslashes($event->location) }}', '{{ $event->capacity }}', '{{ $event->price }}', false);">
+                        <li class="event-card" onclick="window.location='{{ route('registrations.show', ['event' => $event->id]) }}'">
+                            <div class="event-banner">
                                 <i class="fa-solid fa-calendar-check"></i>
                             </div>
-                            <div class="event-content" onclick="event.stopPropagation(); openEventModal({{ $event->id }}, '{{ addslashes($event->title) }}', '{{ addslashes($event->description) }}', '{{ $event->start_time }}', '{{ $event->end_time }}', '{{ addslashes($event->location) }}', '{{ $event->capacity }}', '{{ $event->price }}', false);">
+                            <div class="event-content">
                                 <div class="event-title">{{ $event->title }}</div>
                                 <div class="event-description">{{ $event->description }}</div>
                                 <div class="event-info">
@@ -302,11 +302,11 @@
             @else
                 <ul class="event-grid">
                     @foreach($registrations as $registration)
-                        <li class="event-card" onclick="openEventModal({{ $registration->event->id }}, '{{ addslashes($registration->event->title) }}', '{{ addslashes($registration->event->description) }}', '{{ $registration->event->start_time }}', '{{ $registration->event->end_time }}', '{{ addslashes($registration->event->location) }}', '{{ $registration->event->capacity }}', '{{ $registration->event->price }}', true, '{{ $registration->status }}', {{ $registration->id }})">
-                            <div class="event-banner" onclick="event.stopPropagation(); openEventModal({{ $registration->event->id }}, '{{ addslashes($registration->event->title) }}', '{{ addslashes($registration->event->description) }}', '{{ $registration->event->start_time }}', '{{ $registration->event->end_time }}', '{{ addslashes($registration->event->location) }}', '{{ $registration->event->capacity }}', '{{ $registration->event->price }}', true, '{{ $registration->status }}', {{ $registration->id }});">
+                        <li class="event-card" onclick="window.location='{{ route('registrations.show', ['event' => $registration->event->id]) }}'">
+                            <div class="event-banner">
                                 <i class="fa-solid fa-calendar-check"></i>
                             </div>
-                            <div class="event-content" onclick="event.stopPropagation(); openEventModal({{ $registration->event->id }}, '{{ addslashes($registration->event->title) }}', '{{ addslashes($registration->event->description) }}', '{{ $registration->event->start_time }}', '{{ $registration->event->end_time }}', '{{ addslashes($registration->event->location) }}', '{{ $registration->event->capacity }}', '{{ $registration->event->price }}', true, '{{ $registration->status }}', {{ $registration->id }});">
+                            <div class="event-content">
                                 <div class="event-title">{{ $registration->event->title }}</div>
                                 <div class="event-description">{{ $registration->event->description }}</div>
                                 <div class="event-info">
@@ -320,46 +320,26 @@
                                     @endif
                                     <span><i class="fa-solid fa-money-bill-wave"></i> R$ {{ number_format($registration->event->price, 2, ',', '.') }}</span>
                                 </div>
-                                <div class="event-status">Status: {{ $registration->status }}</div>
+                                <div class="event-status"
+                                    @php
+                                        $status = strtolower($registration->status);
+                                        $color = match($status) {
+                                            'confirmado', 'completed' => '#22c55e', // verde
+                                            'pendente', 'pending' => '#64748b', // cinza
+                                            'cancelado', 'canceled' => '#dc2626', // vermelho
+                                            default => '#2563eb',
+                                        };
+                                    @endphp
+                                    style="color: {{ $color }}; font-weight: bold;"
+                                >
+                                    Status: {{ registrationStatusPt($registration->status) }}
+                                </div>
                             </div>
                         </li>
                     @endforeach
                 </ul>
             @endif
         </div>
-        <!-- Modal de evento para usuário -->
-        <div id="eventUserModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(30,41,59,0.5); z-index:1000; align-items:center; justify-content:center;">
-            <div style="background:#fff; border-radius:1rem; padding:2rem; min-width:320px; max-width:90vw; max-height:90vh; box-shadow:0 6px 32px #0003; position:relative; overflow-y:auto;">
-                <button type="button" onclick="closeEventModal()" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; color:#888; cursor:pointer;">&times;</button>
-                <h2 id="event-modal-title" style="margin-bottom:1rem;"></h2>
-                <div style="margin-bottom:1rem;">
-                    <strong>Descrição:</strong>
-                    <div id="event-modal-description"></div>
-                </div>
-                <div style="margin-bottom:1rem;">
-                    <strong>Início:</strong> <span id="event-modal-start"></span>
-                </div>
-                <div style="margin-bottom:1rem;">
-                    <strong>Fim:</strong> <span id="event-modal-end"></span>
-                </div>
-                <div style="margin-bottom:1rem;">
-                    <strong>Local:</strong> <span id="event-modal-location"></span>
-                </div>
-                <div style="margin-bottom:1rem;">
-                    <strong>Capacidade:</strong> <span id="event-modal-capacity"></span>
-                </div>
-                <div style="margin-bottom:1rem;">
-                    <strong>Preço:</strong> R$ <span id="event-modal-price"></span>
-                </div>
-                <div id="event-modal-status" style="margin-bottom:1rem;"></div>
-                <form id="event-modal-action-form" method="POST" style="margin-top:1rem;">
-                    @csrf
-                    <div id="event-modal-pay-btn-container"></div>
-                    <button id="event-modal-action-btn" type="submit" class="btn-primario"></button>
-                </form>
-            </div>
-        </div>
-
     </div>
 </body>
 <script>

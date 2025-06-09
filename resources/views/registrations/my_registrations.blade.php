@@ -46,7 +46,7 @@
                     <strong>{{ $registration->event->title }}</strong><br>
                     {{ $registration->event->description }}<br>
                     Início: {{ $registration->event->start_time->format('d/m/Y H:i') }}<br>
-                    Status da inscrição: {{ $registration->status }}
+                    Status da inscrição: {{ registrationStatusPt($registration->status) }}
                 </li>
                 @if(!$loop->last)
                     <hr>
